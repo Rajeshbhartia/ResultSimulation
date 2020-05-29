@@ -110,7 +110,6 @@ class PDFGeneratorInterface {
         let body = this._tableBodyArr.map(realObj=>{
             let clonedRealObj = {...realObj}
             let subsetObj = this._pluckSubset(clonedRealObj,subsetPropNames)
-            // console.log(subsetObj) 
             return subsetObj
         })
         return body;

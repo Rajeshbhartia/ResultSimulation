@@ -9,15 +9,25 @@ class FileInput extends Component {
         this.state = {
             file: {},
             data: [],
-            cols: []
+            cols: [],
+            fileValue: ""
         }
         this.handleFile = this.handleFile.bind(this);
         this.handleChange = this.handleChange.bind(this);
     }
 
+    refresh() {
+        this.setState({
+            file: {},
+            data: [],
+            cols: [],
+            fileValue: ""
+        })
+    }
+
     handleChange(e) {
         const files = e.target.files;
-        if (files && files[0]) this.setState({ file: files[0] });
+        if (files && files[0]) this.setState({ file: files[0], fileValue: e.target.value });
     };
 
     handleFile() {
@@ -36,7 +46,6 @@ class FileInput extends Component {
             const data = XLSX.utils.sheet_to_json(ws);
             /* Update state */
             this.setState({ data: data, cols: make_cols(ws['!ref']) }, () => {
-                // console.log((this.state.data));
                 this.props.getData(this.state.data)
             });
 
@@ -54,7 +63,7 @@ class FileInput extends Component {
             <div>
                 <label htmlFor="file">Upload an excel to Process Triggers</label>
                 <br />
-                <input type="file" className="form-control" id="file" accept={".xls,.xlsx"} onChange={this.handleChange} />
+                <input type="file" value={this.state.fileValue} className="form-control" id="file" accept={".xls,.xlsx"} onChange={this.handleChange} />
                 <br />
                 <input type='submit'
                     value="Submit File"
