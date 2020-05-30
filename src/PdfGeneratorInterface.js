@@ -2,11 +2,12 @@ import jsPDF from "jspdf";
 import "jspdf-autotable";
 
 class PDFGeneratorInterface {
-    constructor(tableHeaderArr, tableBodyArr,currentActiveObject) {
+    constructor(tableHeaderArr, tableBodyArr,currentActiveObject,TopHeader) {
          this._pdf = this._getJsPdfInstance ()
          this._tableHeaderArr = tableHeaderArr
          this._tableBodyArr = tableBodyArr
          this._currentActiveObject = currentActiveObject
+         this._topHeader = TopHeader
     }
 
     _getJsPdfInstance = () => {
@@ -25,7 +26,7 @@ class PDFGeneratorInterface {
     }
 
     _makeHeaderSection = () => {
-        this._pdf.text("Pathshala", 100, 10, "center");
+        this._pdf.text(this._topHeader, 100, 10, "center");
         // this._pdf.addImage(base64Img, "jpg", 73, 5, 8, 8);
     }
 
@@ -66,6 +67,9 @@ class PDFGeneratorInterface {
 
     _makeTableDataSection = () => {
         this._pdf.text(this._currentActiveObject, 100, 55, "center");
+        this._pdf.setFontSize(10)
+        this._pdf.text(new Date().toDateString(), 15, 20);
+
         this._pdf.autoTable({
           startY: 60,
           // margin: {top: 10},

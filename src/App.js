@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import FileInput from './FIleInput';
 import PdfGeneratorInterface from "./PdfGeneratorInterface";
-import { Button } from '@material-ui/core';
+import { Button, TextField } from '@material-ui/core';
 import FormGroup from '@material-ui/core/FormGroup';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Checkbox from '@material-ui/core/Checkbox';
@@ -12,7 +12,8 @@ class App extends Component {
     tableHeadersArr: [],
     tableRowsArr: [],
     isBtnDis: true,
-    payload: {}
+    payload: {},
+    instituteName: ""
   }
 
   getData = (data) => {
@@ -25,25 +26,25 @@ class App extends Component {
   gradeCalculator(data) {
     switch (true) {
       case (data < 33):
-        data = `${data} | 0.00 | fail`
+        data = `0.00 | fail`
         break;
       case (data < 40):
-        data = `${data} | 1.00 | D`
+        data = `1.00 | D`
         break;
       case (data < 50):
-        data = `${data} | 2.00 | C`
+        data = `2.00 | C`
         break;
       case (data < 60):
-        data = `${data} | 3.00 | B`
+        data = `3.00 | B`
         break;
       case (data < 70):
-        data = `${data} | 3.50 | A-`
+        data = `3.50 | A-`
         break;
       case (data < 80):
-        data = `${data} | 4.00 | A`
+        data = `4.00 | A`
         break;
       default:
-        data = `${data} | 5.00 | A+`
+        data = `5.00 | A+`
         break;
     }
     return data
@@ -54,18 +55,21 @@ class App extends Component {
     let cgpa = 0
     for (let index = 0; index < subArr.length; index++) {
       const data = subArr[index];
-      if (item[data] < 33) {
+      let marking = parseInt(data.replace(/[^\d]/g, ''), 10) || 100
+      let percentMark = (item[data] * 100) / marking
+
+      if (percentMark < 33) {
         cgpa = 0;
         break
-      } else if (item[data] < 40)
+      } else if (percentMark < 40)
         cgpa += 1.00
-      else if (item[data] < 50)
+      else if (percentMark < 50)
         cgpa += 2.00
-      else if (item[data] < 60)
+      else if (percentMark < 60)
         cgpa += 3.00
-      else if (item[data] < 70)
+      else if (percentMark < 70)
         cgpa += 3.50
-      else if (item[data] < 80)
+      else if (percentMark < 80)
         cgpa += 4.00
       else
         cgpa += 5.00
@@ -76,11 +80,14 @@ class App extends Component {
   generatePDF = async () => {
     let tableRowsArr = [...this.state.tableRowsArr];
     // calculate grade
+    let subArr = Object.keys(this.state.payload);
+
     tableRowsArr.forEach((item, index) => {
-      let subArr = Object.keys(this.state.payload);
       item.cgpa = this.calculateCGPA(item)
       subArr.forEach((data) => {
-        item[data] = this.gradeCalculator(item[data])
+        let marking = parseInt(data.replace(/[^\d]/g, ''), 10) || 100
+        let percentMark = (item[data] * 100) / marking
+        item[data] = item[data] + " | " + this.gradeCalculator(percentMark)
       })
     })
 
@@ -90,14 +97,15 @@ class App extends Component {
       item.position = index + 1
     })
 
-    let tableHeadersArr =  Object.keys(tableRowsArr[0])
+    let tableHeadersArr = Object.keys(tableRowsArr[0])
     tableHeadersArr.unshift("cgpa")
     tableHeadersArr.unshift("position")
     tableHeadersArr.splice(-2)
     let pdfInterface = new PdfGeneratorInterface(
       tableHeadersArr,
       tableRowsArr,
-      "Result"
+      "Result",
+      this.state.instituteName
     );
     pdfInterface.downloadTableAsPDF()
 
@@ -114,6 +122,7 @@ class App extends Component {
       this.fileInputRef.refresh()
     })
   }
+
   handleChange = (e) => {
     let payload = { ...this.state.payload }
     if (e.target.checked)
@@ -124,6 +133,12 @@ class App extends Component {
     this.setState({
       payload,
       isBtnDis: false
+    })
+  }
+
+  setName = (e) => {
+    this.setState({
+      instituteName: e.target.value
     })
   }
 
@@ -139,6 +154,14 @@ class App extends Component {
             <div>
               Choose columns which you want for calculate grade:
             </div>
+            < TextField
+              onChange={this.setName}
+              label={"Enter Institute Name"}
+              value={this.state.instituteName}
+              required variant="outlined"
+              style={{ margin: "20px 0px" }}
+            />
+
             <FormGroup row>
               {this.state.tableHeadersArr.map((item, i) => {
                 return (
