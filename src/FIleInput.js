@@ -1,7 +1,8 @@
 import React, { Component } from 'react';
 import XLSX from 'xlsx';
 import { make_cols } from './MakeColumns';
-
+import { Typography, Button } from '@material-ui/core';
+import CloudUploadIcon from '@material-ui/icons/CloudUpload';
 
 class FileInput extends Component {
     constructor(props) {
@@ -27,7 +28,9 @@ class FileInput extends Component {
 
     handleChange(e) {
         const files = e.target.files;
-        if (files && files[0]) this.setState({ file: files[0], fileValue: e.target.value });
+        if (files && files[0]) this.setState({ file: files[0], fileValue: e.target.value },()=>{
+            this.handleFile()
+        });
     };
 
     handleFile() {
@@ -60,14 +63,29 @@ class FileInput extends Component {
 
     render() {
         return (
-            <div>
-                <label htmlFor="file">Upload an excel to Process Triggers</label>
-                <br />
-                <input type="file" value={this.state.fileValue} className="form-control" id="file" accept={".xls,.xlsx"} onChange={this.handleChange} />
-                <br />
-                <input type='submit'
-                    value="Submit File"
-                    onClick={this.handleFile} />
+            <div style={{ paddingBottom:"16px" }} >
+
+                <div style={{ display: 'flex', alignItems: 'center' }}>
+                    <input
+                        style={{ display: 'none' }}
+                        type="file"
+                        value={this.state.fileValue}
+                        className="form-control"
+                        id="file"
+                        accept={".xls,.xlsx"}
+                        onChange={this.handleChange} />
+                    <Typography style={{ paddingRight: "16px" }} variant="body1" color="initial">Upload File: </Typography>
+                    <label htmlFor={"file"} >
+                        <Button variant="contained" color="default" component="span" startIcon={<CloudUploadIcon />}>Upload</Button>
+                    </label>
+                </div>
+
+                {this.state.file.name && (
+                    <>
+                        <Typography style={{ paddingRight: "8px" }} variant="body2" color="initial">{this.state.file.name}</Typography>
+                        {/* <Button  onClick={this.handleFile} variant="contained" color="default" component="span" >Submit</Button> */}
+                    </>
+                )}
             </div>
         )
     }

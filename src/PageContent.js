@@ -1,0 +1,215 @@
+import React, { Component } from 'react';
+import FileInput from './FIleInput';
+import PdfGeneratorInterface from "./PdfGeneratorInterface";
+import { Button, TextField, Typography } from '@material-ui/core';
+import FormGroup from '@material-ui/core/FormGroup';
+import FormControlLabel from '@material-ui/core/FormControlLabel';
+import Checkbox from '@material-ui/core/Checkbox';
+import DefaultGradingTable from './DefaultGradingTable';
+
+class PageContent extends Component {
+    state = {
+        tableHeadersArr: [],
+        tableRowsArr: [],
+        isBtnDis: true,
+        payload: {},
+        instituteName: "",
+        gradingArray: [
+            [33, "F", "0.00"],
+            [40, "D", "1.00"],
+            [50, "C", "2.00"],
+            [60, "B", "3.00"],
+            [70, "A-", "3.50"],
+            [80, "A", "4.00"],
+            [100, "A+", "5.00"],
+        ]
+    }
+
+    getData = (data) => {
+        this.setState({
+            tableHeadersArr: Object.keys(data[0]),
+            tableRowsArr: data,
+        })
+    }
+
+    gradeCalculator(data) {
+        for (let index = 0; index < this.state.gradingArray.length; index++) {
+            const item = this.state.gradingArray[index];
+            if (data <= item[0]) {
+                data = `${item[1]} | ${item[2]}`;
+                break;
+            }
+        }
+        return data
+    }
+
+    calculateCGPA(item) {
+        let subArr = Object.keys(this.state.payload);
+        let cgpa = 0
+        let passStatus = 1
+        for (let index = 0; index < subArr.length; index++) {
+            const data = subArr[index];
+            let marking = parseInt(data.replace(/[^\d]/g, ''), 10) || 100
+            let percentMark = (item[data] * 100) / marking
+
+            for (let index = 0; index < this.state.gradingArray.length; index++) {
+                const item = this.state.gradingArray[index];
+                if (percentMark <= item[0]) {
+                    if (parseFloat(item[2]) === 0.00) {
+                        passStatus = 0
+                    }
+                    cgpa += parseFloat(item[2])
+                    break;
+                }
+            }
+            if (passStatus === 0) {
+                cgpa = 0.00;
+                break;
+            }
+        }
+        return (cgpa / (subArr.length)).toFixed(2)
+    }
+
+    generatePDF = async () => {
+        let tableRowsArr = [...this.state.tableRowsArr];
+        // calculate grade
+        let subArr = Object.keys(this.state.payload);
+
+        tableRowsArr.forEach((item, index) => {
+            item.cgpa = this.calculateCGPA(item)
+            subArr.forEach((data) => {
+                let marking = parseInt(data.replace(/[^\d]/g, ''), 10) || 100
+                let percentMark = (item[data] * 100) / marking
+                item[data] = item[data] + " | " + this.gradeCalculator(percentMark)
+            })
+        })
+
+        tableRowsArr.sort(function (a, b) { return b.cgpa - a.cgpa });
+
+        tableRowsArr.forEach((item, index) => {
+            item.position = index + 1
+        })
+
+        let tableHeadersArr = Object.keys(tableRowsArr[0])
+        tableHeadersArr.unshift("cgpa")
+        tableHeadersArr.unshift("position")
+        tableHeadersArr.splice(-2)
+        let pdfInterface = new PdfGeneratorInterface(
+            tableHeadersArr,
+            tableRowsArr,
+            "Result",
+            this.state.instituteName
+        );
+        pdfInterface.downloadTableAsPDF()
+
+        this.refresh()
+    };
+
+    refresh = () => {
+        this.setState({
+            tableHeadersArr: [],
+            tableRowsArr: [],
+            payload: {},
+            isBtnDis: true
+        }, () => {
+            this.fileInputRef.refresh()
+        })
+    }
+
+    handleChange = (e) => {
+        let payload = { ...this.state.payload }
+        if (e.target.checked)
+            payload[e.target.name] = e.target.checked
+        else {
+            delete payload[e.target.name]
+        }
+        console.log(payload)
+        let isBtnDis = true
+        if (Object.keys(payload).length !== 0) {
+            isBtnDis = false
+        }
+        this.setState({
+            payload,
+            isBtnDis
+        })
+    }
+
+    setName = (e) => {
+        this.setState({
+            instituteName: e.target.value
+        })
+    }
+
+    setFormData = (data) => {
+        console.log(data)
+        let gradingArray = []
+        data.forEach((item, i) => {
+            let singleGrade = [item.value[1].value, item.value[2].value, item.value[3].value]
+            gradingArray.push(singleGrade)
+        })
+        console.log(gradingArray)
+        this.setState({
+            gradingArray
+        })
+    }
+
+    render() {
+        return (
+            <React.Fragment>
+                <Typography variant="h4" component="h2" style={{ paddingBottom: 20 }}>
+                    Upload An Excel File To Generate Academic Result
+                </Typography>
+
+                <div style={{display:"flex",justifyContent:"space-between"}}>
+
+                    <div style={{flex:1}}>
+                        <FileInput getData={this.getData} ref={(r) => { this.fileInputRef = r }} />
+
+                        {this.state.tableHeadersArr.length > 0 && (
+                            <div>
+                                <Typography variant="h6" component="h2">
+                                    Choose columns which you want for calculate grade:
+                                </Typography>
+
+                                < TextField
+                                    onChange={this.setName}
+                                    label={"Enter Institute Name"}
+                                    value={this.state.instituteName}
+                                    required variant="outlined"
+                                    style={{ margin: "20px 0px" }}
+                                />
+
+                                <FormGroup row>
+                                    {this.state.tableHeadersArr.map((item, i) => {
+                                        return (
+                                            <FormControlLabel
+                                                control={<Checkbox checked={this.state.payload.item} onChange={this.handleChange} name={item} />}
+                                                label={item}
+                                                key={i}
+                                            />
+                                        )
+                                    })}
+
+                                </FormGroup>                            
+                            </div>
+                        )}
+
+                        <Button
+                            variant="contained"
+                            color="primary"
+                            disabled={this.state.isBtnDis}
+                            onClick={this.generatePDF}
+                        >
+                            Download Result
+                        </Button>
+                    </div>
+
+                    <DefaultGradingTable setFormData={this.setFormData}/>
+
+                </div>
+            </React.Fragment>
+        );
+    }
+}
+
+export default PageContent;

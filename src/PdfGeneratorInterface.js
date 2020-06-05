@@ -16,7 +16,9 @@ class PDFGeneratorInterface {
 
     downloadTableAsPDF = () => {
         this._makePDF()
-        this._pdf.save("a4.pdf");
+        let d= new Date().toISOString()
+        let insName = this._topHeader !== "" ? this._topHeader : "Institute" 
+        this._pdf.save(`${insName}_result_${d}.pdf`);
     }
 
     _makePDF = () => {
