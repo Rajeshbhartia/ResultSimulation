@@ -1,11 +1,12 @@
 import React, { Component } from 'react';
 import FileInput from './FIleInput';
 import PdfGeneratorInterface from "./PdfGeneratorInterface";
-import { Button, TextField, Typography } from '@material-ui/core';
+import { Button, TextField, Typography, Paper } from '@material-ui/core';
 import FormGroup from '@material-ui/core/FormGroup';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Checkbox from '@material-ui/core/Checkbox';
 import DefaultGradingTable from './DefaultGradingTable';
+import Faq from './Faq';
 
 class PageContent extends Component {
     state = {
@@ -153,58 +154,68 @@ class PageContent extends Component {
         })
     }
 
+    getFileInput = () => {
+        return (
+            <div>
+                <FileInput getData={this.getData} ref={(r) => { this.fileInputRef = r }} />
+
+                {this.state.tableHeadersArr.length > 0 && (
+                    <div>
+                        <Typography variant="h6" component="h2">
+                            Choose columns which you want for calculate grade:
+                        </Typography>
+
+                        < TextField
+                            onChange={this.setName}
+                            label={"Enter Institute Name"}
+                            value={this.state.instituteName}
+                            required variant="outlined"
+                            style={{ margin: "20px 0px" }}
+                        />
+
+                        <FormGroup row>
+                            {this.state.tableHeadersArr.map((item, i) => {
+                                return (
+                                    <FormControlLabel
+                                        control={<Checkbox checked={this.state.payload.item} onChange={this.handleChange} name={item} />}
+                                        label={item}
+                                        key={i}
+                                    />
+                                )
+                            })}
+
+                        </FormGroup>
+                    </div>
+                )}
+
+                <Button
+                    variant="contained"
+                    color="primary"
+                    disabled={this.state.isBtnDis}
+                    onClick={this.generatePDF}
+                >
+                    Download Result
+                </Button>
+            </div>
+        )
+    }
+
     render() {
+        let fileInput = this.getFileInput()
         return (
             <React.Fragment>
                 <Typography variant="h4" component="h2" style={{ paddingBottom: 20 }}>
-                    Upload An Excel File To Generate Academic Result
+                    Upload MARKS of students to GENERATE RESULT
                 </Typography>
 
-                <div style={{display:"flex",justifyContent:"space-between"}}>
+                <div style={{ display: "flex", justifyContent: "space-between" }}>
 
-                    <div style={{flex:1}}>
-                        <FileInput getData={this.getData} ref={(r) => { this.fileInputRef = r }} />
-
-                        {this.state.tableHeadersArr.length > 0 && (
-                            <div>
-                                <Typography variant="h6" component="h2">
-                                    Choose columns which you want for calculate grade:
-                                </Typography>
-
-                                < TextField
-                                    onChange={this.setName}
-                                    label={"Enter Institute Name"}
-                                    value={this.state.instituteName}
-                                    required variant="outlined"
-                                    style={{ margin: "20px 0px" }}
-                                />
-
-                                <FormGroup row>
-                                    {this.state.tableHeadersArr.map((item, i) => {
-                                        return (
-                                            <FormControlLabel
-                                                control={<Checkbox checked={this.state.payload.item} onChange={this.handleChange} name={item} />}
-                                                label={item}
-                                                key={i}
-                                            />
-                                        )
-                                    })}
-
-                                </FormGroup>                            
-                            </div>
-                        )}
-
-                        <Button
-                            variant="contained"
-                            color="primary"
-                            disabled={this.state.isBtnDis}
-                            onClick={this.generatePDF}
-                        >
-                            Download Result
-                        </Button>
+                    <div style={{ flex: 1, padding: "8px 32px 16px 0px" }}>
+                        <Paper children={fileInput} elevation={1} style={{ minHeight: 250, padding: 16, marginBottom: 16, display: "flex", alignItems: "center", justifyContent: "center" }} />
+                        <Faq />
                     </div>
 
-                    <DefaultGradingTable setFormData={this.setFormData}/>
+                    <DefaultGradingTable setFormData={this.setFormData} />
 
                 </div>
             </React.Fragment>

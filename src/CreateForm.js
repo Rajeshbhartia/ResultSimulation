@@ -81,7 +81,7 @@ class CreateForm extends Component {
             this.setState({
                 contentToShowInDialog: "resp",
             })
-        }else if (contentToShowInDialog === "resp"){
+        } else if (contentToShowInDialog === "resp") {
             this.setState({
                 open: false,
                 contentToShowInDialog: "constraintsPage",
@@ -141,6 +141,8 @@ class CreateForm extends Component {
                                     }}
                                     style={{ width: "300px", margin: "10px" }}
                                     value={numOfGrade}
+                                    fullWidth
+                                    required
                                 ></TextField>
                             )}
 
@@ -154,12 +156,14 @@ class CreateForm extends Component {
                                     Your custom grade was submitted. Please click the Download Result button to download the result
                                 </div>)
                             }
-                            <Button autoFocus onClick={this.handleClose} color="primary">
-                                Cancel
-                            </Button>
-                            <Button type="submit" color="primary" autoFocus>
-                                Submit
-                            </Button>
+                            <div style={{ display: "flex", justifyContent: "flex-end", padding:"24px 8px 24px 0px"}}>
+                                <Button autoFocus onClick={this.handleClose} color="primary" style={{ marginRight: 16 }}>
+                                    Cancel
+                                </Button>
+                                <Button type="submit" color="primary" autoFocus variant="contained" >
+                                    Submit
+                                </Button>
+                            </div>
                         </form>
 
                     </DialogContent>
