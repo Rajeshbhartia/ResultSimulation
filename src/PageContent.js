@@ -7,6 +7,7 @@ import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Checkbox from '@material-ui/core/Checkbox';
 import DefaultGradingTable from './DefaultGradingTable';
 import Faq from './Faq';
+import DrawCanves from './DrawCanves';
 
 class PageContent extends Component {
     state = {
@@ -23,7 +24,9 @@ class PageContent extends Component {
             [69, "A-", "3.50"],
             [79, "A", "4.00"],
             [100, "A+", "5.00"],
-        ]
+        ],
+        picData: {},
+        showComp: "initial_comp"
     }
 
     getData = (data) => {
@@ -86,7 +89,6 @@ class PageContent extends Component {
         })
 
         tableRowsArr.sort(function (a, b) { return b.cgpa - a.cgpa });
-
         tableRowsArr.forEach((item, index) => {
             item.position = index + 1
         })
@@ -185,6 +187,8 @@ class PageContent extends Component {
                             })}
 
                         </FormGroup>
+
+
                     </div>
                 )}
 
@@ -196,28 +200,69 @@ class PageContent extends Component {
                 >
                     Download Result
                 </Button>
+                <Button variant="contained"
+                    color="primary"
+                    disabled={this.state.isBtnDis}
+                    style={{ marginLeft: 20 }}
+                    onClick={this.onShowStatClick}> Show stat </Button>
             </div>
         )
+    }
+
+    onShowStatClick = () => {
+        console.log(this.state)
+        let tableRowsArr = [...this.state.tableRowsArr];
+        // calculate grade
+        let subArr = Object.keys(this.state.payload);
+        let picData = {}
+
+        subArr.forEach((data) => {
+            picData[data] = []
+        })
+
+        tableRowsArr.forEach((item, index) => {
+            subArr.forEach((data) => {
+                let marking = parseInt(data.replace(/[^\d]/g, ''), 10) || 100
+                let percentMark = (item[data] * 100) / marking
+                let gc = this.gradeCalculator(percentMark)
+                let sGrade = gc.slice(0, (gc.indexOf("|") - 1))
+                picData[data].push(sGrade)
+            })
+        })
+        console.log(picData, this.state.gradingArray)
+        this.setState({
+            picData,
+            showComp: "canvas"
+        })
+    }
+
+    switchComp = (showComp) => {
+        this.setState({
+            showComp
+        })
     }
 
     render() {
         let fileInput = this.getFileInput()
         return (
             <React.Fragment>
-                <Typography variant="h4" component="h2" style={{ paddingBottom: 20 }}>
-                    Upload MARKS of students to GENERATE RESULT
-                </Typography>
+                {this.state.showComp === "initial_comp" && (
+                    <>
+                        <Typography variant="h4" component="h2" style={{ paddingBottom: 20 }}>
+                            Upload MARKS of students to GENERATE RESULT
+                        </Typography>
 
-                <div style={{ display: "flex", justifyContent: "space-between" }}>
+                        <div style={{ display: "flex", justifyContent: "space-between" }}>
+                            <div style={{ flex: 1, padding: "8px 32px 16px 0px" }}>
+                                <Paper children={fileInput} elevation={1} style={{ minHeight: 200, padding: 16, marginBottom: 16, display: "flex", alignItems: "center", justifyContent: "center" }} />
+                                <Faq />
+                            </div>
+                            <DefaultGradingTable setFormData={this.setFormData} />
+                        </div>
+                    </>
+                )}
 
-                    <div style={{ flex: 1, padding: "8px 32px 16px 0px" }}>
-                        <Paper children={fileInput} elevation={1} style={{ minHeight: 200, padding: 16, marginBottom: 16, display: "flex", alignItems: "center", justifyContent: "center" }} />
-                        <Faq />
-                    </div>
-
-                    <DefaultGradingTable setFormData={this.setFormData} />
-
-                </div>
+                {this.state.showComp === "canvas" && <DrawCanves picData={this.state.picData} gradingArray={this.state.gradingArray} switchComp={this.switchComp}/>}
             </React.Fragment>
         );
     }
