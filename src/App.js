@@ -31,7 +31,7 @@ class App extends Component {
             </div>
             <div>
               <span style={{ paddingRight: "20px", cursor: "pointer", opacity: opA }} onClick={() => { this.setContent("home") }}> Home</span>
-              <span style={{ cursor: "pointer", opacity: opB }} onClick={() => { this.setContent("faq") }}> Faq</span>
+              <span style={{ cursor: "pointer", opacity: opB }} onClick={() => { this.setContent("faq") }}> FAQ</span>
             </div>
           </Toolbar>
         </AppBar>

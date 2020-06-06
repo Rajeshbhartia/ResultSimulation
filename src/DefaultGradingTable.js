@@ -27,10 +27,10 @@ class DefaultGradingTable extends Component {
         return (
             <div>
                 <Typography variant="h6" component="h2" style={{marginBottom:20}}>
-                    Default Grade
+                    Default Grades
                 </Typography>
                 <TableContainer component={Paper} style={{ width: "auto" , marginBottom:20}}>
-                    <Table aria-label="simple table" style={{ minWidth: "400px" }}>
+                    <Table aria-label="simple table" style={{ minWidth: "400px" }} size='small'>
                         <TableHead>
                             <TableRow>
                                 {tHead.map((item, i) => <TableCell key={i} style={{textTransform:"capitalize"}}>{item}</TableCell>)}

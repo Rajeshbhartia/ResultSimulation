@@ -74,18 +74,12 @@ class FileInput extends Component {
                         id="file"
                         accept={".xls,.xlsx"}
                         onChange={this.handleChange} />
-                    <Typography style={{ paddingRight: "16px" }} variant="body1" color="initial">Upload File: </Typography>
+                    <Typography style={{ paddingRight: "16px" }} variant="body1" color="initial">Upload File(.xls/.xlsx): </Typography>
                     <label htmlFor={"file"} >
                         <Button variant="contained" color="default" component="span" startIcon={<CloudUploadIcon />}>Upload</Button>
                     </label>
+                    <Typography style={{ paddingLeft: "16px" }} variant="body2" color="initial">{this.state.file.name ? this.state.file.name : ""}</Typography>
                 </div>
-
-                {this.state.file.name && (
-                    <>
-                        <Typography style={{ paddingRight: "8px" }} variant="body2" color="initial">{this.state.file.name}</Typography>
-                        {/* <Button  onClick={this.handleFile} variant="contained" color="default" component="span" >Submit</Button> */}
-                    </>
-                )}
             </div>
         )
     }

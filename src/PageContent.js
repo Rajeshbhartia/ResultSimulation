@@ -161,9 +161,6 @@ class PageContent extends Component {
 
                 {this.state.tableHeadersArr.length > 0 && (
                     <div>
-                        <Typography variant="h6" component="h2">
-                            Choose columns which you want for calculate grade:
-                        </Typography>
 
                         < TextField
                             onChange={this.setName}
@@ -173,6 +170,9 @@ class PageContent extends Component {
                             style={{ margin: "20px 0px" }}
                         />
 
+                        <Typography variant="h6" component="h2">
+                            Select columns that contain mark
+                        </Typography>
                         <FormGroup row>
                             {this.state.tableHeadersArr.map((item, i) => {
                                 return (
@@ -211,7 +211,7 @@ class PageContent extends Component {
                 <div style={{ display: "flex", justifyContent: "space-between" }}>
 
                     <div style={{ flex: 1, padding: "8px 32px 16px 0px" }}>
-                        <Paper children={fileInput} elevation={1} style={{ minHeight: 250, padding: 16, marginBottom: 16, display: "flex", alignItems: "center", justifyContent: "center" }} />
+                        <Paper children={fileInput} elevation={1} style={{ minHeight: 200, padding: 16, marginBottom: 16, display: "flex", alignItems: "center", justifyContent: "center" }} />
                         <Faq />
                     </div>
 

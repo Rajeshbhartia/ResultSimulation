@@ -64,7 +64,7 @@ export default function CustomizedExpansionPanels() {
                 </ExpansionPanelSummary>
                 <ExpansionPanelDetails>
                     <Typography>
-                        Upload excel file -> Choose columns that contain marks -> Download Result
+                        Upload excel file -> Select columns that contain mark -> Download Result
                     </Typography>
                 </ExpansionPanelDetails>
             </ExpansionPanel>
@@ -74,7 +74,7 @@ export default function CustomizedExpansionPanels() {
                 </ExpansionPanelSummary>
                 <ExpansionPanelDetails>
                     <Typography>
-                        Add total-mark in column header(not necessary in case of 100).  e.g. English(50) -> Upload excel file -> Choose columns that contain marks -> Download Result
+                        Add total-mark in column header(not necessary in case of 100).  e.g. English(50) -> Upload excel file -> Select columns that contain mark -> Download Result
                     </Typography>
                 </ExpansionPanelDetails>
             </ExpansionPanel>
@@ -84,7 +84,7 @@ export default function CustomizedExpansionPanels() {
                 </ExpansionPanelSummary>
                 <ExpansionPanelDetails>
                     <Typography>
-                        Upload excel file -> Choose columns that contain marks -> Create Custom Grades -> Download Result
+                        Upload excel file -> Select columns that contain mark -> Create Custom Grades -> Download Result
                     </Typography>
                 </ExpansionPanelDetails>
             </ExpansionPanel>
