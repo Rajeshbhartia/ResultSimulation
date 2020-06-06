@@ -8,6 +8,7 @@ import TableRow from '@material-ui/core/TableRow';
 import Paper from '@material-ui/core/Paper';
 import CreateForm from './CreateForm';
 import { Typography } from '@material-ui/core';
+import sampleFile from "./resource/sample_file.xls";
 
 const tHead = ["start", "end", "grade", "gpa"]
 
@@ -26,14 +27,14 @@ class DefaultGradingTable extends Component {
     render() {
         return (
             <div>
-                <Typography variant="h6" component="h2" style={{marginBottom:20}}>
+                <Typography variant="h6" component="h2" style={{ marginBottom: 20 }}>
                     Default Grades
                 </Typography>
-                <TableContainer component={Paper} style={{ width: "auto" , marginBottom:20}}>
+                <TableContainer component={Paper} style={{ width: "auto", marginBottom: 20 }}>
                     <Table aria-label="simple table" style={{ minWidth: "400px" }} size='small'>
                         <TableHead>
                             <TableRow>
-                                {tHead.map((item, i) => <TableCell key={i} style={{textTransform:"capitalize"}}>{item}</TableCell>)}
+                                {tHead.map((item, i) => <TableCell key={i} style={{ textTransform: "capitalize" }}>{item}</TableCell>)}
                             </TableRow>
                         </TableHead>
                         <TableBody>
@@ -47,6 +48,11 @@ class DefaultGradingTable extends Component {
                 </TableContainer>
 
                 <CreateForm setFormData={this.props.setFormData} />
+
+                <Typography variant="h6" component="span"  style={{ marginTop: 20 }}>
+                    Sample File
+                </Typography>
+                <a href={sampleFile} style={{marginLeft:8}} download>Click to download</a>
             </div>
         );
     }
