@@ -18,7 +18,6 @@ class PieChart extends Component {
             let datapoint = []
             this.props.gradingArray.forEach((item, i) => {
                 let x = this.getOccurrence(value, item[1])
-                console.log(item[1], x, sub)
                 let obj = {}
                 obj.y = (x / value.length * 100).toFixed(2)
                 obj.label = item[1]

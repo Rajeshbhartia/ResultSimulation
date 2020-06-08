@@ -16,6 +16,7 @@ class PageContent extends Component {
         isBtnDis: true,
         payload: {},
         instituteName: "",
+        description: "",
         gradingArray: [
             [32, "F", "0.00"],
             [39, "D", "1.00"],
@@ -101,7 +102,8 @@ class PageContent extends Component {
             tableHeadersArr,
             tableRowsArr,
             "Result",
-            this.state.instituteName
+            this.state.instituteName,
+            this.state.description
         );
         pdfInterface.downloadTableAsPDF()
 
@@ -156,6 +158,12 @@ class PageContent extends Component {
         })
     }
 
+    setDescription = (e) => {
+        this.setState({
+            description: e.target.value
+        })
+    }
+
     getFileInput = () => {
         return (
             <div>
@@ -163,14 +171,23 @@ class PageContent extends Component {
 
                 {this.state.tableHeadersArr.length > 0 && (
                     <div>
-
+                        <div>
+                            < TextField
+                                onChange={this.setName}
+                                label={"Enter Institute Name"}
+                                value={this.state.instituteName}
+                                required variant="outlined"
+                                style={{ margin: "20px 0px", width: 300 }}
+                            />
+                        </div>
                         < TextField
-                            onChange={this.setName}
-                            label={"Enter Institute Name"}
-                            value={this.state.instituteName}
+                            onChange={this.setDescription}
+                            label={"Description"}
                             required variant="outlined"
-                            style={{ margin: "20px 0px" }}
+                            style={{ margin: "20px 0px", width: 300 }}
+                            multiline
                         />
+
 
                         <Typography variant="h6" component="h2">
                             Select columns that contain mark
@@ -187,8 +204,6 @@ class PageContent extends Component {
                             })}
 
                         </FormGroup>
-
-
                     </div>
                 )}
 
@@ -262,7 +277,7 @@ class PageContent extends Component {
                     </>
                 )}
 
-                {this.state.showComp === "canvas" && <DrawCanves picData={this.state.picData} gradingArray={this.state.gradingArray} switchComp={this.switchComp}/>}
+                {this.state.showComp === "canvas" && <DrawCanves picData={this.state.picData} gradingArray={this.state.gradingArray} switchComp={this.switchComp} />}
             </React.Fragment>
         );
     }

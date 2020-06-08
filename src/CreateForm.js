@@ -40,7 +40,7 @@ class CreateForm extends Component {
                     id={singleForm.id}
                     InputProps={{
                         readOnly: item.readOnly,
-                        inputProps: { max: 100, min: 10 }
+                        // inputProps: { max: 100, min: 10 }
                     }}
                     variant="outlined"
                     {...item}
@@ -63,12 +63,12 @@ class CreateForm extends Component {
             let form = [];
             for (let i = 0; i < numOfGrade; i++) {
                 let obj = {}
-                obj.id = i;
+                obj.id = i.toString();
                 obj.value = [
                     { label: "Start", type: "number", name: 'start', disabled: true, onChange: this.onChange, value: (perSectionValue * i) + 1, required: true },
                     { label: "End", type: "number", name: 'end', onChange: this.onChange, value: i === numOfGrade - 1 ? 100 : perSectionValue * (i + 1), disabled: i === numOfGrade - 1 ? true : false, required: true },
                     { label: "Grade", type: "text", name: 'grade', onChange: this.onChange, value: "", required: true },
-                    { label: "GPA", type: "text", name: 'gpa', onChange: this.onChange, value: "", required: true }
+                    { label: "GPA", type: "number", name: 'gpa', onChange: this.onChange, value: "", required: true }
                 ]
                 form.push(obj)
             }
@@ -94,7 +94,8 @@ class CreateForm extends Component {
     onChange = (e) => {
         let form = [...this.state.presetForm]
         form.forEach((item, i) => {
-            if (item.id == e.target.id) {
+            console.log(item.id, e.target.id)
+            if (item.id === e.target.id) {
                 item.value.forEach((sing, index) => {
                     if (sing.name === e.target.name) {
                         if (e.target.name === "end") {

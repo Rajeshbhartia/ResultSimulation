@@ -40,7 +40,7 @@ class DefaultGradingTable extends Component {
                         <TableBody>
                             {rows.map((row, index) => (
                                 <TableRow key={index}>
-                                    {tHead.map((item, i) => <TableCell component="th" scope="row">{row[item]}</TableCell>)}
+                                    {tHead.map((item, i) => <TableCell component="th" scope="row" key ={i}>{row[item]}</TableCell>)}
                                 </TableRow>
                             ))}
                         </TableBody>
