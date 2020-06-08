@@ -8,7 +8,6 @@ import TableRow from '@material-ui/core/TableRow';
 import Paper from '@material-ui/core/Paper';
 import CreateForm from './CreateForm';
 import { Typography } from '@material-ui/core';
-import sampleFile from "./resource/sample_file.xls";
 
 const tHead = ["start", "end", "grade", "gpa"]
 
@@ -49,10 +48,6 @@ class DefaultGradingTable extends Component {
 
                 <CreateForm setFormData={this.props.setFormData} />
 
-                <Typography variant="h6" component="span"  style={{ marginTop: 20 }}>
-                    Sample File
-                </Typography>
-                <a href={sampleFile} style={{marginLeft:8}} download>Click to download</a>
             </div>
         );
     }

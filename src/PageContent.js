@@ -8,6 +8,7 @@ import Checkbox from '@material-ui/core/Checkbox';
 import DefaultGradingTable from './DefaultGradingTable';
 import Faq from './Faq';
 import DrawCanves from './DrawCanves';
+import sampleFile from "./resource/sample_marks_file.xls";
 
 class PageContent extends Component {
     state = {
@@ -167,7 +168,14 @@ class PageContent extends Component {
     getFileInput = () => {
         return (
             <div>
+
                 <FileInput getData={this.getData} ref={(r) => { this.fileInputRef = r }} />
+                <div style={{ marginBottom: "10px", }}>
+                    <Typography variant="h6" component="span">
+                        Sample Marks File
+                    </Typography>
+                    <a href={sampleFile} style={{ marginLeft: 8 }} download>Click to download</a>
+                </div>
 
                 {this.state.tableHeadersArr.length > 0 && (
                     <div>
@@ -199,6 +207,7 @@ class PageContent extends Component {
                                         control={<Checkbox checked={this.state.payload.item} onChange={this.handleChange} name={item} />}
                                         label={item}
                                         key={i}
+                                        style={{ minWidth: 200 }}
                                     />
                                 )
                             })}
