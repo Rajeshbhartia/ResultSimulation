@@ -128,7 +128,6 @@ class PDFGeneratorInterface {
       let subsetObj = this._pluckSubset(clonedRealObj, subsetPropNames)
       return subsetObj
     })
-    console.log(body, this._tableBodyArr)
     return body;
   }
 
