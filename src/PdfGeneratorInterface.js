@@ -24,8 +24,8 @@ class PDFGeneratorInterface {
 
   _makePDF = () => {
     this._makeHeaderSection()
-    this._makeMetaDataSection()
     this._makeTableDataSection()
+    this._makeSingleDataTable()
   }
 
   _makeHeaderSection = () => {
@@ -33,42 +33,6 @@ class PDFGeneratorInterface {
     this._pdf.text(this._topHeader, 100, 10, "center");
     this._pdf.setFontSize(12)
     this._pdf.text(this._description, 100, 15, "center");
-    // this._pdf.addImage(base64Img, "jpg", 73, 5, 8, 8);
-  }
-
-  _makeMetaDataSection = () => {
-    this._pdf.autoTable({
-      startY: 23,
-      // theme: "",
-      //html: '#printable',
-      //head: headRows(),
-      // body: [
-      //   ["Name :", "Mr.X"],
-      //   ["Email :", "valid@gmail.com"],
-      //   ["Generate Date :", "12-10-3019"]
-      // ],
-      headStyles: {
-        lineWidth: 0.1,
-        lineColor: [0, 0, 0]
-      },
-      styles: {
-        cellWidth: 35,
-        cellPadding: 0.7
-        //rowHeight :0
-      },
-      didParseCell: function (table) {
-        if (table.section === "head") {
-          table.cell.styles.fillColor = "white";
-          table.cell.styles.textColor = "black";
-          table.cell.styles.lineColor = "black";
-        }
-        if (table.section === "body") {
-          table.cell.styles.fillColor = "white";
-          table.cell.styles.textColor = "black";
-          table.cell.styles.lineColor = "black";
-        }
-      }
-    });
   }
 
   _makeTableDataSection = () => {
@@ -82,7 +46,7 @@ class PDFGeneratorInterface {
       // margin: {top: 10},
       theme: "grid",
       //html: '#printable',
-      head: this._makeHeaderRow(),
+      // head: this._makeHeaderRow(),
       body: this._makeBodyRows(),
       headStyles: {
         lineWidth: 0.1,
@@ -108,6 +72,47 @@ class PDFGeneratorInterface {
     });
   }
 
+
+  _makeSingleDataTable = () => {
+    this._tableBodyArr.forEach((item, i) => {
+      this._pdf.addPage();
+      this._pdf.setFontSize(20)
+      this._pdf.text(this._topHeader, 100, 20, "center");
+      this._pdf.setFontSize(10)
+      this._pdf.text(new Date().toDateString(), 15, 20);
+
+      this._pdf.autoTable({
+        startY: 45,
+        theme: "grid",
+        body: this._makeSingleRes(item),
+        styles: {
+          cellPadding: 2,
+          fontSize: 16,
+        },
+        didParseCell: function (table) {
+          if (table.section === "body") {
+            table.cell.styles.fillColor = "white";
+            table.cell.styles.textColor = "black";
+            table.cell.styles.lineColor = "darkgray";
+          }
+        }
+      });
+    })
+
+  }
+
+  _makeSingleRes = (singleRow) => {
+    let arr = []
+    Object.entries(singleRow).forEach(([key, value]) => {
+      let obj = {}
+      obj.key = key;
+      obj.value = value
+      arr.push(obj)
+    })
+    console.log(arr)
+    return arr
+  }
+
   _makeHeaderRow = () => {
     let headersObj = this._tableHeaderArr.reduce((obj, headerName, index) => {
       obj[headerName] = headerName
@@ -123,8 +128,11 @@ class PDFGeneratorInterface {
       let subsetObj = this._pluckSubset(clonedRealObj, subsetPropNames)
       return subsetObj
     })
+    console.log(body, this._tableBodyArr)
     return body;
   }
+
+
 
   _pluckSubset = (clonedRealObj, subsetPropNames) => {
     let subsetObj = {}
