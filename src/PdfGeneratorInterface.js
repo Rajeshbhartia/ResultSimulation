@@ -2,13 +2,14 @@ import jsPDF from "jspdf";
 import "jspdf-autotable";
 
 class PDFGeneratorInterface {
-  constructor(tableHeaderArr, tableBodyArr, currentActiveObject, TopHeader, Description) {
+  constructor(tableHeaderArr, tableBodyArr, currentActiveObject, TopHeader, Description, Photo) {
     this._pdf = this._getJsPdfInstance()
     this._tableHeaderArr = tableHeaderArr
     this._tableBodyArr = tableBodyArr
     this._currentActiveObject = currentActiveObject
     this._topHeader = TopHeader
     this._description = Description
+    this._photo = Photo
   }
 
   _getJsPdfInstance = () => {
@@ -39,22 +40,31 @@ class PDFGeneratorInterface {
     this._pdf.setFontSize(16)
     this._pdf.text(this._currentActiveObject, 100, 40, "center");
     this._pdf.setFontSize(10)
-    this._pdf.text(new Date().toDateString(), 15, 10);
+    var width = this._pdf.internal.pageSize.getWidth();
+    var height = this._pdf.internal.pageSize.getHeight();
+
+    if (this._photo.upload_logo) {
+      this._pdf.addImage(this._photo.upload_logo, '', 15, 5, 20, 20)
+    }
+    if (this._photo.upload_signature) {
+      this._pdf.addImage(this._photo.upload_signature, '', width - 40, height - 20, 30, 10)
+    }
+    this._pdf.text(new Date().toDateString(), width - 40, height - 5);
 
     this._pdf.autoTable({
       startY: 45,
       // margin: {top: 10},
       theme: "grid",
       //html: '#printable',
-      // head: this._makeHeaderRow(),
+      head: this._makeHeaderRow(),
       body: this._makeBodyRows(),
       headStyles: {
         lineWidth: 0.1,
         lineColor: [0, 0, 0]
       },
       styles: {
-        cellPadding: 0.5,
-        fontSize: 9,
+        cellPadding: 0.75,
+        fontSize: 10,
         tableWidth: 'wrap',
       },
       didParseCell: function (table) {
@@ -76,10 +86,21 @@ class PDFGeneratorInterface {
   _makeSingleDataTable = () => {
     this._tableBodyArr.forEach((item, i) => {
       this._pdf.addPage();
-      this._pdf.setFontSize(20)
-      this._pdf.text(this._topHeader, 100, 20, "center");
+      // this._pdf.setFontSize(20)
+      // this._pdf.text(this._topHeader, 100, 20, "center");
+      this._makeHeaderSection()
+      // this._pdf.text(new Date().toDateString(), 15, 20);
+      var width = this._pdf.internal.pageSize.getWidth();
+      var height = this._pdf.internal.pageSize.getHeight();
+      
+      if (this._photo.upload_logo) {
+        this._pdf.addImage(this._photo.upload_logo, '', 15, 10, 20, 20)
+      }
+      if (this._photo.upload_signature) {
+        this._pdf.addImage(this._photo.upload_signature, '', width - 40, height - 25, 30, 10)
+      }
       this._pdf.setFontSize(10)
-      this._pdf.text(new Date().toDateString(), 15, 20);
+      this._pdf.text(new Date().toDateString(), width - 40, height - 10);
 
       this._pdf.autoTable({
         startY: 45,

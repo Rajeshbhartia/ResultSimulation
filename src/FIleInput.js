@@ -28,7 +28,7 @@ class FileInput extends Component {
 
     handleChange(e) {
         const files = e.target.files;
-        if (files && files[0]) this.setState({ file: files[0], fileValue: e.target.value },()=>{
+        if (files && files[0]) this.setState({ file: files[0], fileValue: e.target.value }, () => {
             this.handleFile()
         });
     };
@@ -63,9 +63,9 @@ class FileInput extends Component {
 
     render() {
         return (
-            <div style={{ paddingBottom:"16px" }} >
+            <div style={{ paddingBottom: "30px" }} >
 
-                <div style={{ display: 'flex', alignItems: 'center' }}>
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: "space-between" }}>
                     <input
                         style={{ display: 'none' }}
                         type="file"
@@ -73,13 +73,14 @@ class FileInput extends Component {
                         className="form-control"
                         id="file"
                         accept={".xls,.xlsx"}
-                        onChange={this.handleChange} />
-                    <Typography style={{ paddingRight: "16px" }} variant="body1" color="initial">Upload File(.xls/.xlsx): </Typography>
+                        onChange={this.handleChange}
+                        />
+                    <Typography style={{ paddingRight: "16px" }} variant="body1" color="initial">Upload File(.xls/.xlsx)* </Typography>
                     <label htmlFor={"file"} >
                         <Button variant="contained" color="default" component="span" startIcon={<CloudUploadIcon />}>Upload</Button>
                     </label>
-                    <Typography style={{ paddingLeft: "16px" }} variant="body2" color="initial">{this.state.file.name ? this.state.file.name : ""}</Typography>
                 </div>
+                <Typography style={{ float:"right"}} variant="body2" color="initial">{this.state.file.name ? this.state.file.name : ""}</Typography>
             </div>
         )
     }

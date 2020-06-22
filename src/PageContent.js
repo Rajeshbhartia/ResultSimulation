@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import FileInput from './FIleInput';
 import PdfGeneratorInterface from "./PdfGeneratorInterface";
-import { Button, TextField, Typography, Paper } from '@material-ui/core';
+import { Button, TextField, Typography, Paper, Grid, Link } from '@material-ui/core';
 import FormGroup from '@material-ui/core/FormGroup';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Checkbox from '@material-ui/core/Checkbox';
@@ -9,6 +9,9 @@ import DefaultGradingTable from './DefaultGradingTable';
 import Faq from './Faq';
 import DrawCanves from './DrawCanves';
 import sampleFile from "./resource/sample_marks_file.xls";
+import UploadImage from './UploadImage';
+import ErrorIcon from '@material-ui/icons/ErrorOutlineRounded';
+
 
 class PageContent extends Component {
     state = {
@@ -28,7 +31,9 @@ class PageContent extends Component {
             [100, "A+", "5.00"],
         ],
         picData: {},
-        showComp: "initial_comp"
+        showComp: "initial_comp",
+        uploadPhoto: {},
+        showCheckBoxComp: false
     }
 
     getData = (data) => {
@@ -104,7 +109,8 @@ class PageContent extends Component {
             tableRowsArr,
             "Result",
             this.state.instituteName,
-            this.state.description
+            this.state.description,
+            this.state.uploadPhoto
         );
         pdfInterface.downloadTableAsPDF()
 
@@ -129,7 +135,7 @@ class PageContent extends Component {
         else {
             delete payload[e.target.name]
         }
-        console.log(payload)
+        // console.log(payload)
         let isBtnDis = true
         if (Object.keys(payload).length !== 0) {
             isBtnDis = false
@@ -165,71 +171,93 @@ class PageContent extends Component {
         })
     }
 
+    setImageData = (id, url) => {
+        let uploadPhoto = { ...this.state.uploadPhoto }
+        uploadPhoto[id] = url
+        this.setState({
+            uploadPhoto
+        })
+    }
+
+    onSubmit = (e) => {
+        e.preventDefault();
+        console.log("hello")
+        if (this.state.tableHeadersArr.length !== 0) {
+            this.setState({
+                showCheckBoxComp: true,
+                setError: ""
+            })
+        }
+        else {
+            this.setState({
+                setError: "Please upload your file for result generation"
+            })
+        }
+    }
+
     getFileInput = () => {
         return (
-            <div>
 
-                <FileInput getData={this.getData} ref={(r) => { this.fileInputRef = r }} />
-                <div style={{ marginBottom: "10px", }}>
-                    <Typography variant="h6" component="span">
-                        Sample Marks File
-                    </Typography>
-                    <a href={sampleFile} style={{ marginLeft: 8 }} download>Click to download</a>
-                </div>
+            <Grid container style={{ flexGrow: 1 }} spacing={2}>
+                <Grid item xs={12}>
+                    <Grid container spacing={2}>
+                        <Grid item style={{ width: 450 }} >
+                            <form onSubmit={this.onSubmit}>
+                                <FileInput getData={this.getData} ref={(r) => { this.fileInputRef = r }} />
+                                <UploadImage id="upload_logo" label="Upload Logo" setData={this.setImageData} />
+                                <UploadImage id="upload_signature" label="Upload Signature" setData={this.setImageData} />
 
-                {this.state.tableHeadersArr.length > 0 && (
-                    <div>
-                        <div>
-                            < TextField
-                                onChange={this.setName}
-                                label={"Enter Institute Name"}
-                                value={this.state.instituteName}
-                                required variant="outlined"
-                                style={{ margin: "20px 0px", width: 300 }}
-                            />
-                        </div>
-                        < TextField
-                            onChange={this.setDescription}
-                            label={"Description"}
-                            required variant="outlined"
-                            style={{ margin: "20px 0px", width: 300 }}
-                            multiline
-                        />
+                                < TextField
+                                    onChange={this.setName}
+                                    label={"Enter Institute Name"}
+                                    value={this.state.instituteName}
+                                    required variant="outlined"
+                                    style={{ margin: "12px 0px" }}
+                                    fullWidth
+                                />
 
+                                < TextField
+                                    onChange={this.setDescription}
+                                    label={"Description"}
+                                    variant="outlined"
+                                    style={{ margin: "12px 0px 24px 0px" }}
+                                    multiline
+                                    fullWidth
+                                />
+                                {this.state.setError && (
+                                    <div style={{ display: "flex", alignItems: "center", color: "red", marginBottom: 16 }}>
+                                        <ErrorIcon style={{ height: "0.6em", width: "0.6em", marginRight: 8 }} />
+                                        <Typography variant="subtitle2">
+                                            {this.state.setError}
+                                        </Typography>
+                                    </div>
+                                )}
+                                <Button
+                                    variant="contained"
+                                    color="primary"
+                                    type="submit"
+                                    style={{ float: "right" }}
+                                >
+                                    Submit
+                                </Button>
+                            </form>
 
-                        <Typography variant="h6" component="h2">
-                            Select columns that contain mark
-                        </Typography>
-                        <FormGroup row>
-                            {this.state.tableHeadersArr.map((item, i) => {
-                                return (
-                                    <FormControlLabel
-                                        control={<Checkbox checked={this.state.payload.item} onChange={this.handleChange} name={item} />}
-                                        label={item}
-                                        key={i}
-                                        style={{ minWidth: 200 }}
-                                    />
-                                )
-                            })}
+                        </Grid>
+                        <div style={{ width: 2, background: "#d8d8d8", margin: "0px 16px" }}></div>
+                        <Grid item style={{ width: 200 }} >
+                            <div style={{ marginBottom: "10px", display: "flex", flexDirection: "column" }}>
+                                <Typography variant="h6" component="span">
+                                    Sample Marks File
+                                </Typography>
 
-                        </FormGroup>
-                    </div>
-                )}
-
-                <Button
-                    variant="contained"
-                    color="primary"
-                    disabled={this.state.isBtnDis}
-                    onClick={this.generatePDF}
-                >
-                    Download Result
-                </Button>
-                <Button variant="contained"
-                    color="primary"
-                    disabled={this.state.isBtnDis}
-                    style={{ marginLeft: 20 }}
-                    onClick={this.onShowStatClick}> Show stat </Button>
-            </div>
+                                <Link href={sampleFile} download>
+                                    Click to download
+                                </Link>
+                            </div>
+                        </Grid>
+                    </Grid>
+                </Grid>
+            </Grid>
         )
     }
 
@@ -278,11 +306,52 @@ class PageContent extends Component {
 
                         <div style={{ display: "flex", justifyContent: "space-between" }}>
                             <div style={{ flex: 1, padding: "8px 32px 16px 0px" }}>
-                                <Paper children={fileInput} elevation={1} style={{ minHeight: 200, padding: 16, marginBottom: 16, display: "flex", alignItems: "center", justifyContent: "center" }} />
+                                <Paper children={fileInput} elevation={1} style={{ minHeight: 200, padding: 16, marginBottom: 16 }} />
+
+                                {this.state.showCheckBoxComp && (
+                                    <Paper style={{ padding: 16, margin: "16px 0px" }} >
+                                        <Typography variant="h6" component="h2" style={{ marginBottom: "16px", fontWeight:500 }}>
+                                            Select columns that contain mark
+                                        </Typography>
+
+                                        <FormGroup row>
+                                            {this.state.tableHeadersArr.map((item, i) => {
+                                                return (
+                                                    <FormControlLabel
+                                                        control={<Checkbox checked={this.state.payload.item} onChange={this.handleChange} name={item} />}
+                                                        label={item}
+                                                        key={i}
+                                                        style={{ minWidth: 200 }}
+                                                    />
+                                                )
+                                            })}
+                                        </FormGroup>
+                                        <div style={{ display: "flex", justifyContent: "flex-end", padding: "20px 0px" }}>
+                                            <Button variant="outlined"
+                                                color="primary"
+                                                disabled={this.state.isBtnDis}
+                                                onClick={this.onShowStatClick}>
+                                                Show stat
+                                            </Button>
+                                            <Button
+                                                variant="contained"
+                                                color="primary"
+                                                disabled={this.state.isBtnDis}
+                                                style={{ marginLeft: 20 }}
+                                                onClick={this.generatePDF}
+                                            >
+                                                Download Result
+                                            </Button>
+
+                                        </div>
+                                    </Paper>
+                                )}
+
                                 <Faq />
                             </div>
                             <DefaultGradingTable setFormData={this.setFormData} />
                         </div>
+
                     </>
                 )}
 
