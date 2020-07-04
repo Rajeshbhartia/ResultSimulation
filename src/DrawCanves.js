@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import CanvasJSReact from './assets/canvasjs.react';
-import { Button } from '@material-ui/core';
+import { Button, Grid } from '@material-ui/core';
 var CanvasJSChart = CanvasJSReact.CanvasJSChart;
 
 class PieChart extends Component {
@@ -13,7 +13,7 @@ class PieChart extends Component {
 
     render() {
         let options = [];
-
+        console.log(this.props.picData)
         Object.entries(this.props.picData).forEach(([sub, value], index) => {
             let datapoint = []
             this.props.gradingArray.forEach((item, i) => {
@@ -45,17 +45,22 @@ class PieChart extends Component {
             options.push(optionObj)
         })
 
-        console.log(this.props)
-
-
-
         return (
             <div>
                 <Button variant="contained"
                     color="primary"
                     onClick={() => this.props.switchComp("initial_comp")}>Back</Button>
                 <h1>Results simulation</h1>
-                {options.map((option, i) => <CanvasJSChart options={option} key={i} />)}
+                
+                <Grid container style={{ flexGrow: 1 }} spacing={2}>
+                    <Grid item xs={12}>
+                        <Grid container spacing={2}>
+                            {options.map((option, i) => <Grid item > <CanvasJSChart options={option} key={i} /> </Grid>)}
+                        </Grid>
+                    </Grid>
+                </Grid>
+                <div>
+                </div>
             </div>
         );
     }

@@ -9,16 +9,16 @@ import Paper from '@material-ui/core/Paper';
 import CreateForm from './CreateForm';
 import { Typography } from '@material-ui/core';
 
-const tHead = ["start", "end", "grade", "gpa"]
+const tHead = ["range", "grade", "gpa"]
 
 const rows = [
-    { start: 0, end: 32, grade: "F", gpa: "0.00" },
-    { start: 33, end: 39, grade: "D", gpa: "1.00" },
-    { start: 40, end: 49, grade: "C", gpa: "2.00" },
-    { start: 50, end: 59, grade: "B", gpa: "3.00" },
-    { start: 60, end: 69, grade: "A-", gpa: "3.50" },
-    { start: 70, end: 79, grade: "A", gpa: "4.00" },
-    { start: 80, end: 100, grade: "A+", gpa: "5.00" },
+    { range: "0 - 32", grade: "F", gpa: "0.00" },
+    { range: "33 - 39", grade: "D", gpa: "1.00" },
+    { range: "40 - 49", grade: "C", gpa: "2.00" },
+    { range: "50 - 59", grade: "B", gpa: "3.00" },
+    { range: "60 - 69", grade: "A-", gpa: "3.50" },
+    { range: "70 - 79", grade: "A", gpa: "4.00" },
+    { range: "80 - 100", grade: "A+", gpa: "5.00" },
 ];
 
 
@@ -30,7 +30,7 @@ class DefaultGradingTable extends Component {
                     Default Grades
                 </Typography>
                 <TableContainer component={Paper} style={{ width: "auto", marginBottom: 20 }}>
-                    <Table aria-label="simple table" style={{ minWidth: "400px" }} size='small'>
+                    <Table aria-label="simple table" style={{ minWidth: "300px" }} size='small'>
                         <TableHead>
                             <TableRow>
                                 {tHead.map((item, i) => <TableCell key={i} style={{ textTransform: "capitalize" }}>{item}</TableCell>)}

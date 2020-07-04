@@ -7,10 +7,11 @@ import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Checkbox from '@material-ui/core/Checkbox';
 import DefaultGradingTable from './DefaultGradingTable';
 import Faq from './Faq';
-import DrawCanves from './DrawCanves';
+// import DrawCanves from './DrawCanves';
 import sampleFile from "./resource/sample_marks_file.xls";
 import UploadImage from './UploadImage';
 import ErrorIcon from '@material-ui/icons/ErrorOutlineRounded';
+import DrawCharts from './DrawCharts';
 
 
 class PageContent extends Component {
@@ -104,6 +105,7 @@ class PageContent extends Component {
         tableHeadersArr.unshift("cgpa")
         tableHeadersArr.unshift("position")
         tableHeadersArr.splice(-2)
+        
         let pdfInterface = new PdfGeneratorInterface(
             tableHeadersArr,
             tableRowsArr,
@@ -243,7 +245,7 @@ class PageContent extends Component {
                             </form>
 
                         </Grid>
-                        <div style={{ width: 2, background: "#d8d8d8", margin: "0px 16px" }}></div>
+                        <div style={{ width: 1, background: "#d8d8d8", margin: "0px 16px" }}></div>
                         <Grid item style={{ width: 200 }} >
                             <div style={{ marginBottom: "10px", display: "flex", flexDirection: "column" }}>
                                 <Typography variant="h6" component="span">
@@ -263,27 +265,52 @@ class PageContent extends Component {
 
     onShowStatClick = () => {
         console.log(this.state)
+        // let tableRowsArr = [...this.state.tableRowsArr];
+        // // calculate grade
+        // let subArr = Object.keys(this.state.payload);
+        // let picData = {}
+
+        // // let barChartMapper = {}
+        // subArr.forEach((data) => {
+        //     picData[data] = []
+        // })
+
+        // tableRowsArr.forEach((item, index) => {
+        //     subArr.forEach((data) => {
+        //         let marking = parseInt(data.replace(/[^\d]/g, ''), 10) || 100
+        //         let percentMark = (item[data] * 100) / marking
+        //         let gc = this.gradeCalculator(percentMark)
+        //         let sGrade = gc.slice(0, (gc.indexOf("|") - 1))
+        //         picData[data].push(sGrade)
+        //     })
+        // })
+
         let tableRowsArr = [...this.state.tableRowsArr];
         // calculate grade
         let subArr = Object.keys(this.state.payload);
-        let picData = {}
-
-        subArr.forEach((data) => {
-            picData[data] = []
-        })
 
         tableRowsArr.forEach((item, index) => {
+            item.cgpa = this.calculateCGPA(item)
             subArr.forEach((data) => {
                 let marking = parseInt(data.replace(/[^\d]/g, ''), 10) || 100
                 let percentMark = (item[data] * 100) / marking
                 let gc = this.gradeCalculator(percentMark)
                 let sGrade = gc.slice(0, (gc.indexOf("|") - 1))
-                picData[data].push(sGrade)
+                item[data] = {grade:sGrade, marks: item[data]}
             })
         })
-        console.log(picData, this.state.gradingArray)
+
+        tableRowsArr.sort(function (a, b) { return b.cgpa - a.cgpa });
+        tableRowsArr.forEach((item, index) => {
+            item.position = index + 1
+        })
+
+        // let tableHeadersArr = Object.keys(tableRowsArr[0])
+
+
+        // console.log(picData, this.state.gradingArray)
         this.setState({
-            picData,
+            picData : tableRowsArr ,
             showComp: "canvas"
         })
     }
@@ -355,7 +382,7 @@ class PageContent extends Component {
                     </>
                 )}
 
-                {this.state.showComp === "canvas" && <DrawCanves picData={this.state.picData} gradingArray={this.state.gradingArray} switchComp={this.switchComp} />}
+                {this.state.showComp === "canvas" && <DrawCharts picData={this.state.picData} gradingArray={this.state.gradingArray} switchComp={this.switchComp} subArr={this.state.payload}/>}
             </React.Fragment>
         );
     }
