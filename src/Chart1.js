@@ -12,6 +12,7 @@ class Chart1 extends Component {
               series={this.props.series}
               type="bar"
               // width="700"
+              height="300"
             />
           </div>
         </div>

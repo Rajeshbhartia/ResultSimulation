@@ -12,7 +12,7 @@ import sampleFile from "./resource/sample_marks_file.xls";
 import UploadImage from './UploadImage';
 import ErrorIcon from '@material-ui/icons/ErrorOutlineRounded';
 import DrawCharts from './DrawCharts';
-
+// import Stepper from "./Stepper"
 
 class PageContent extends Component {
     state = {
@@ -82,8 +82,8 @@ class PageContent extends Component {
         return (cgpa / (subArr.length)).toFixed(2)
     }
 
-    generatePDF = async () => {
-        let tableRowsArr = [...this.state.tableRowsArr];
+    generatePDF = () => {
+        let tableRowsArr = JSON.parse(JSON.stringify(this.state.tableRowsArr))
         // calculate grade
         let subArr = Object.keys(this.state.payload);
 
@@ -105,7 +105,7 @@ class PageContent extends Component {
         tableHeadersArr.unshift("cgpa")
         tableHeadersArr.unshift("position")
         tableHeadersArr.splice(-2)
-        
+
         let pdfInterface = new PdfGeneratorInterface(
             tableHeadersArr,
             tableRowsArr,
@@ -116,19 +116,19 @@ class PageContent extends Component {
         );
         pdfInterface.downloadTableAsPDF()
 
-        this.refresh()
+        // this.refresh()
     };
 
-    refresh = () => {
-        this.setState({
-            tableHeadersArr: [],
-            tableRowsArr: [],
-            payload: {},
-            isBtnDis: true
-        }, () => {
-            this.fileInputRef.refresh()
-        })
-    }
+    // refresh = () => {
+    //     this.setState({
+    //         tableHeadersArr: [],
+    //         tableRowsArr: [],
+    //         payload: {},
+    //         isBtnDis: true
+    //     }, () => {
+    //         this.fileInputRef.refresh()
+    //     })
+    // }
 
     handleChange = (e) => {
         let payload = { ...this.state.payload }
@@ -137,7 +137,6 @@ class PageContent extends Component {
         else {
             delete payload[e.target.name]
         }
-        // console.log(payload)
         let isBtnDis = true
         if (Object.keys(payload).length !== 0) {
             isBtnDis = false
@@ -155,13 +154,11 @@ class PageContent extends Component {
     }
 
     setFormData = (data) => {
-        console.log(data)
         let gradingArray = []
         data.forEach((item, i) => {
             let singleGrade = [item.value[1].value, item.value[2].value, item.value[3].value]
             gradingArray.push(singleGrade)
         })
-        console.log(gradingArray)
         this.setState({
             gradingArray
         })
@@ -183,7 +180,6 @@ class PageContent extends Component {
 
     onSubmit = (e) => {
         e.preventDefault();
-        console.log("hello")
         if (this.state.tableHeadersArr.length !== 0) {
             this.setState({
                 showCheckBoxComp: true,
@@ -199,7 +195,6 @@ class PageContent extends Component {
 
     getFileInput = () => {
         return (
-
             <Grid container style={{ flexGrow: 1 }} spacing={2}>
                 <Grid item xs={12}>
                     <Grid container spacing={2}>
@@ -209,7 +204,7 @@ class PageContent extends Component {
                                 <UploadImage id="upload_logo" label="Upload Logo" setData={this.setImageData} />
                                 <UploadImage id="upload_signature" label="Upload Signature" setData={this.setImageData} />
 
-                                < TextField
+                                <TextField
                                     onChange={this.setName}
                                     label={"Enter Institute Name"}
                                     value={this.state.instituteName}
@@ -218,7 +213,7 @@ class PageContent extends Component {
                                     fullWidth
                                 />
 
-                                < TextField
+                                <TextField
                                     onChange={this.setDescription}
                                     label={"Description"}
                                     variant="outlined"
@@ -243,9 +238,10 @@ class PageContent extends Component {
                                     Submit
                                 </Button>
                             </form>
-
                         </Grid>
+
                         <div style={{ width: 1, background: "#d8d8d8", margin: "0px 16px" }}></div>
+
                         <Grid item style={{ width: 200 }} >
                             <div style={{ marginBottom: "10px", display: "flex", flexDirection: "column" }}>
                                 <Typography variant="h6" component="span">
@@ -264,31 +260,9 @@ class PageContent extends Component {
     }
 
     onShowStatClick = () => {
-        console.log(this.state)
-        // let tableRowsArr = [...this.state.tableRowsArr];
-        // // calculate grade
-        // let subArr = Object.keys(this.state.payload);
-        // let picData = {}
-
-        // // let barChartMapper = {}
-        // subArr.forEach((data) => {
-        //     picData[data] = []
-        // })
-
-        // tableRowsArr.forEach((item, index) => {
-        //     subArr.forEach((data) => {
-        //         let marking = parseInt(data.replace(/[^\d]/g, ''), 10) || 100
-        //         let percentMark = (item[data] * 100) / marking
-        //         let gc = this.gradeCalculator(percentMark)
-        //         let sGrade = gc.slice(0, (gc.indexOf("|") - 1))
-        //         picData[data].push(sGrade)
-        //     })
-        // })
-
-        let tableRowsArr = [...this.state.tableRowsArr];
+        let tableRowsArr = JSON.parse(JSON.stringify(this.state.tableRowsArr))
         // calculate grade
         let subArr = Object.keys(this.state.payload);
-
         tableRowsArr.forEach((item, index) => {
             item.cgpa = this.calculateCGPA(item)
             subArr.forEach((data) => {
@@ -296,21 +270,15 @@ class PageContent extends Component {
                 let percentMark = (item[data] * 100) / marking
                 let gc = this.gradeCalculator(percentMark)
                 let sGrade = gc.slice(0, (gc.indexOf("|") - 1))
-                item[data] = {grade:sGrade, marks: item[data]}
+                item[data] = { grade: sGrade, marks: item[data] }
             })
         })
-
         tableRowsArr.sort(function (a, b) { return b.cgpa - a.cgpa });
         tableRowsArr.forEach((item, index) => {
             item.position = index + 1
         })
-
-        // let tableHeadersArr = Object.keys(tableRowsArr[0])
-
-
-        // console.log(picData, this.state.gradingArray)
         this.setState({
-            picData : tableRowsArr ,
+            picData: tableRowsArr,
             showComp: "canvas"
         })
     }
@@ -333,19 +301,21 @@ class PageContent extends Component {
 
                         <div style={{ display: "flex", justifyContent: "space-between" }}>
                             <div style={{ flex: 1, padding: "8px 32px 16px 0px" }}>
+                                {/* first component */}
                                 <Paper children={fileInput} elevation={1} style={{ minHeight: 200, padding: 16, marginBottom: 16 }} />
-
+                                {/* second component */}
                                 {this.state.showCheckBoxComp && (
                                     <Paper style={{ padding: 16, margin: "16px 0px" }} >
-                                        <Typography variant="h6" component="h2" style={{ marginBottom: "16px", fontWeight:500 }}>
+                                        <Typography variant="h6" component="h2" style={{ marginBottom: "16px", fontWeight: 500 }}>
                                             Select columns that contain mark
                                         </Typography>
 
                                         <FormGroup row>
                                             {this.state.tableHeadersArr.map((item, i) => {
+        
                                                 return (
                                                     <FormControlLabel
-                                                        control={<Checkbox checked={this.state.payload.item} onChange={this.handleChange} name={item} />}
+                                                        control={<Checkbox checked={this.state.payload[item]} onChange={this.handleChange} name={item} />}
                                                         label={item}
                                                         key={i}
                                                         style={{ minWidth: 200 }}
@@ -382,7 +352,7 @@ class PageContent extends Component {
                     </>
                 )}
 
-                {this.state.showComp === "canvas" && <DrawCharts picData={this.state.picData} gradingArray={this.state.gradingArray} switchComp={this.switchComp} subArr={this.state.payload}/>}
+                {this.state.showComp === "canvas" && <DrawCharts picData={this.state.picData} gradingArray={this.state.gradingArray} switchComp={this.switchComp} subArr={this.state.payload} />}
             </React.Fragment>
         );
     }

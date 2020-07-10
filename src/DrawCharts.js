@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import Chart1 from './Chart1';
 import Chart2 from "./Chart2";
-import { Typography } from '@material-ui/core';
+import { Typography, Button } from '@material-ui/core';
 
 class DrawCharts extends Component {
     state = {
@@ -19,7 +19,7 @@ class DrawCharts extends Component {
                 data: []
             }
         ],
-        barchartSeris:[]
+        barchartSeris: []
     }
 
 
@@ -46,41 +46,40 @@ class DrawCharts extends Component {
         })
         this.makeBarchartSeries()
     }
-    makeBarchartSeries(){
+    makeBarchartSeries() {
         let barchartSeris = []
 
-        this.props.gradingArray.forEach((item)=>{
+        this.props.gradingArray.forEach((item) => {
             let obj = {}
             obj.name = item[1]
             obj.point = {}
             barchartSeris.push(obj)
         })
 
-        this.props.picData.forEach(element=>{
-            Object.keys(this.props.subArr).forEach((sub,i)=>{
-                let x =element[sub].grade
-                // console.log(x)
-                let index = barchartSeris.findIndex((item)=>{
+        this.props.picData.forEach(element => {
+            Object.keys(this.props.subArr).forEach((sub, i) => {
+                let x = element[sub].grade
+
+                let index = barchartSeris.findIndex((item) => {
                     return item.name === x
                 })
-                // console.log(barchartSeris)
-                if(barchartSeris[index].point && barchartSeris[index].point[sub]){
+                if (barchartSeris[index].point && barchartSeris[index].point[sub]) {
                     barchartSeris[index].point[sub] = barchartSeris[index].point[sub] + 1
-                }else if(barchartSeris[index].point){ 
+                } else if (barchartSeris[index].point) {
                     // barchartSeris[index].point = {}
                     barchartSeris[index].point[sub] = 1
-                }else{
+                } else {
                     barchartSeris[index].point = {}
                     barchartSeris[index].point[sub] = 1
                 }
             })
         })
-        barchartSeris.forEach(item=>{
+        barchartSeris.forEach(item => {
             item.data = []
-            Object.keys(this.props.subArr).forEach((sub,index)=>{
-                if(item.point[sub]){
+            Object.keys(this.props.subArr).forEach((sub, index) => {
+                if (item.point[sub]) {
                     item.data[index] = item.point[sub]
-                }else{
+                } else {
                     item.data[index] = 0
                 }
             })
@@ -89,15 +88,18 @@ class DrawCharts extends Component {
         this.setState({
             barchartSeris
         })
-        
+
     }
     render() {
-        console.log(this.props)
-        if(this.state.cgpaOptions.xaxis.categories.length === 0 || Object.keys(this.props.subArr).length === 0 || this.state.barchartSeris.length === 0) return null        
+        if (this.state.cgpaOptions.xaxis.categories.length === 0 || Object.keys(this.props.subArr).length === 0 || this.state.barchartSeris.length === 0) return null
         return (
             <div>
+                <Button variant="contained"
+                    color="primary"
+                    onClick={() => this.props.switchComp("initial_comp")} style={{marginBottom:20}}>Back</Button>
+
                 <Typography component="div" variant="h6"> Performence Per Subject </Typography>
-                <Chart2 series={this.state.barchartSeris} categories = {Object.keys(this.props.subArr)}/>
+                <Chart2 series={this.state.barchartSeris} categories={Object.keys(this.props.subArr)} />
 
                 <Typography component="div" variant="h6"> CGPA Of Students </Typography>
                 <Chart1 options={this.state.cgpaOptions} series={this.state.cgpaSeries} />

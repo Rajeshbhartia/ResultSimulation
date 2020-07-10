@@ -130,7 +130,6 @@ class PDFGeneratorInterface {
       obj.value = value
       arr.push(obj)
     })
-    console.log(arr)
     return arr
   }
 

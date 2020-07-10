@@ -94,7 +94,6 @@ class CreateForm extends Component {
     onChange = (e) => {
         let form = [...this.state.presetForm]
         form.forEach((item, i) => {
-            console.log(item.id, e.target.id)
             if (item.id === e.target.id) {
                 item.value.forEach((sing, index) => {
                     if (sing.name === e.target.name) {

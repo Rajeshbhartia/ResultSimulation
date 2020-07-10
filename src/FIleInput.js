@@ -3,6 +3,7 @@ import XLSX from 'xlsx';
 import { make_cols } from './MakeColumns';
 import { Typography, Button } from '@material-ui/core';
 import CloudUploadIcon from '@material-ui/icons/CloudUpload';
+import { setValue, getValue } from "./Globals";
 
 class FileInput extends Component {
     constructor(props) {
@@ -29,6 +30,7 @@ class FileInput extends Component {
     handleChange(e) {
         const files = e.target.files;
         if (files && files[0]) this.setState({ file: files[0], fileValue: e.target.value }, () => {
+            setValue("fileName", this.state.file.name)
             this.handleFile()
         });
     };
@@ -74,13 +76,13 @@ class FileInput extends Component {
                         id="file"
                         accept={".xls,.xlsx"}
                         onChange={this.handleChange}
-                        />
+                    />
                     <Typography style={{ paddingRight: "16px" }} variant="body1" color="initial">Upload File(.xls/.xlsx)* </Typography>
                     <label htmlFor={"file"} >
                         <Button variant="contained" color="default" component="span" startIcon={<CloudUploadIcon />}>Upload</Button>
                     </label>
                 </div>
-                <Typography style={{ float:"right"}} variant="body2" color="initial">{this.state.file.name ? this.state.file.name : ""}</Typography>
+                <Typography style={{ float: "right" }} variant="body2" color="initial">{getValue("fileName")}</Typography>
             </div>
         )
     }

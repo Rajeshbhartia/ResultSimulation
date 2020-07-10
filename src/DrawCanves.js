@@ -13,7 +13,6 @@ class PieChart extends Component {
 
     render() {
         let options = [];
-        console.log(this.props.picData)
         Object.entries(this.props.picData).forEach(([sub, value], index) => {
             let datapoint = []
             this.props.gradingArray.forEach((item, i) => {
