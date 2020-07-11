@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import Chart1 from './Chart1';
 import Chart2 from "./Chart2";
 import { Typography, Button } from '@material-ui/core';
-
+import BackIcon from '@material-ui/icons/ArrowBack'; 
 class DrawCharts extends Component {
     state = {
         cgpaOptions: {
@@ -95,8 +95,13 @@ class DrawCharts extends Component {
         return (
             <div>
                 <Button variant="contained"
-                    color="primary"
-                    onClick={() => this.props.switchComp("initial_comp")} style={{marginBottom:20}}>Back</Button>
+                    // color="secondary"
+                    onClick={() => this.props.switchComp("initial_comp")}
+                    style={{ marginBottom: 20 }}
+                    startIcon={<BackIcon />}
+                >
+                    Back
+                </Button>
 
                 <Typography component="div" variant="h6"> Performence Per Subject </Typography>
                 <Chart2 series={this.state.barchartSeris} categories={Object.keys(this.props.subArr)} />

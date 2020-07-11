@@ -13,6 +13,11 @@ import UploadImage from './UploadImage';
 import ErrorIcon from '@material-ui/icons/ErrorOutlineRounded';
 import DrawCharts from './DrawCharts';
 // import Stepper from "./Stepper"
+import Stepper from '@material-ui/core/Stepper';
+import Step from '@material-ui/core/Step';
+import StepLabel from '@material-ui/core/StepLabel';
+import BackIcon from '@material-ui/icons/ArrowBack';
+
 
 class PageContent extends Component {
     state = {
@@ -34,7 +39,8 @@ class PageContent extends Component {
         picData: {},
         showComp: "initial_comp",
         uploadPhoto: {},
-        showCheckBoxComp: false
+        // showCheckBoxComp: false,
+        activeStep: 0
     }
 
     getData = (data) => {
@@ -115,20 +121,7 @@ class PageContent extends Component {
             this.state.uploadPhoto
         );
         pdfInterface.downloadTableAsPDF()
-
-        // this.refresh()
     };
-
-    // refresh = () => {
-    //     this.setState({
-    //         tableHeadersArr: [],
-    //         tableRowsArr: [],
-    //         payload: {},
-    //         isBtnDis: true
-    //     }, () => {
-    //         this.fileInputRef.refresh()
-    //     })
-    // }
 
     handleChange = (e) => {
         let payload = { ...this.state.payload }
@@ -181,8 +174,9 @@ class PageContent extends Component {
     onSubmit = (e) => {
         e.preventDefault();
         if (this.state.tableHeadersArr.length !== 0) {
+            this.handleNext()
             this.setState({
-                showCheckBoxComp: true,
+                // showCheckBoxComp: true,
                 setError: ""
             })
         }
@@ -218,6 +212,7 @@ class PageContent extends Component {
                                     label={"Description"}
                                     variant="outlined"
                                     style={{ margin: "12px 0px 24px 0px" }}
+                                    value = {this.state.description}
                                     multiline
                                     fullWidth
                                 />
@@ -289,8 +284,93 @@ class PageContent extends Component {
         })
     }
 
-    render() {
+
+    //stepper method
+    getSteps() {
+        return ['Upload Marks', 'Select Marks Column'];
+    }
+
+    getStepContent(stepIndex) {
         let fileInput = this.getFileInput()
+
+        switch (stepIndex) {
+            case 0:
+                return <Paper children={fileInput} elevation={1} style={{ minHeight: 200, padding: 16, marginBottom: 16 }} />
+            case 1:
+                return this.step2Content();
+            default:
+                return 'Unknown stepIndex';
+        }
+    }
+
+    step2Content = () => {
+        return (
+            <Paper style={{ padding: 16, margin: "16px 0px" }} >
+                <Typography variant="h6" component="h2" style={{ marginBottom: "16px", fontWeight: 500 }}>
+                    Select columns that contain mark
+                </Typography>
+
+                <FormGroup row>
+                    {this.state.tableHeadersArr.map((item, i) => {
+
+                        return (
+                            <FormControlLabel
+                                control={<Checkbox checked={this.state.payload[item]} onChange={this.handleChange} name={item} />}
+                                label={item}
+                                key={i}
+                                style={{ minWidth: 200 }}
+                            />
+                        )
+                    })}
+                </FormGroup>
+
+                <div style={{ display: "flex", justifyContent: "space-between", padding: "20px 0px" }}>
+                    <Button
+                        variant="contained"
+                        // color="primary"
+                        startIcon={<BackIcon />}
+                        onClick={this.handleBack}>
+                        Back
+                    </Button>
+
+                    <div style={{ display: "flex", justifyContent: "flex-end" }}>
+
+                        <Button variant="outlined"
+                            color="primary"
+                            disabled={this.state.isBtnDis}
+                            onClick={this.onShowStatClick}>
+                            Show stat
+                        </Button>
+                        <Button
+                            variant="contained"
+                            color="primary"
+                            disabled={this.state.isBtnDis}
+                            style={{ marginLeft: 20 }}
+                            onClick={this.generatePDF}
+                        >
+                            Download Result
+                        </Button>
+                    </div>
+                </div>
+            </Paper>
+        )
+    }
+
+
+    handleNext = () => {
+        this.setState({
+            activeStep: this.state.activeStep + 1
+        })
+    };
+
+    handleBack = () => {
+        this.setState({
+            activeStep: this.state.activeStep - 1
+        })
+    };
+
+    render() {
+        const steps = this.getSteps();
         return (
             <React.Fragment>
                 {this.state.showComp === "initial_comp" && (
@@ -299,50 +379,26 @@ class PageContent extends Component {
                             Upload MARKS of students to GENERATE RESULT
                         </Typography>
 
+
                         <div style={{ display: "flex", justifyContent: "space-between" }}>
                             <div style={{ flex: 1, padding: "8px 32px 16px 0px" }}>
+                                <div style={{ width: '100%' }}>
+                                    <Stepper activeStep={this.state.activeStep} alternativeLabel>
+                                        {steps.map((label) => (
+                                            <Step key={label}>
+                                                <StepLabel>{label}</StepLabel>
+                                            </Step>
+                                        ))}
+                                    </Stepper>
+                                </div>
+
+                                {this.getStepContent(this.state.activeStep)}
                                 {/* first component */}
-                                <Paper children={fileInput} elevation={1} style={{ minHeight: 200, padding: 16, marginBottom: 16 }} />
+
                                 {/* second component */}
-                                {this.state.showCheckBoxComp && (
-                                    <Paper style={{ padding: 16, margin: "16px 0px" }} >
-                                        <Typography variant="h6" component="h2" style={{ marginBottom: "16px", fontWeight: 500 }}>
-                                            Select columns that contain mark
-                                        </Typography>
-
-                                        <FormGroup row>
-                                            {this.state.tableHeadersArr.map((item, i) => {
-        
-                                                return (
-                                                    <FormControlLabel
-                                                        control={<Checkbox checked={this.state.payload[item]} onChange={this.handleChange} name={item} />}
-                                                        label={item}
-                                                        key={i}
-                                                        style={{ minWidth: 200 }}
-                                                    />
-                                                )
-                                            })}
-                                        </FormGroup>
-                                        <div style={{ display: "flex", justifyContent: "flex-end", padding: "20px 0px" }}>
-                                            <Button variant="outlined"
-                                                color="primary"
-                                                disabled={this.state.isBtnDis}
-                                                onClick={this.onShowStatClick}>
-                                                Show stat
-                                            </Button>
-                                            <Button
-                                                variant="contained"
-                                                color="primary"
-                                                disabled={this.state.isBtnDis}
-                                                style={{ marginLeft: 20 }}
-                                                onClick={this.generatePDF}
-                                            >
-                                                Download Result
-                                            </Button>
-
-                                        </div>
-                                    </Paper>
-                                )}
+                                {/* {this.state.showCheckBoxComp && (
+                                 
+                                )} */}
 
                                 <Faq />
                             </div>

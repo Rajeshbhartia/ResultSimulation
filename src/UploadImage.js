@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { Typography, Button } from '@material-ui/core';
 import CloudUploadIcon from '@material-ui/icons/CloudUpload';
+import { setValue, getValue } from "./Globals";
 
 class UploadImage extends Component {
 
@@ -16,6 +17,8 @@ class UploadImage extends Component {
         this.setState({
             file:e.target.files[0]
         })
+        setValue(this.props.label, e.target.files[0].name)
+
         this.getBase64(e.target.files[0], (result) => {
             this.props.setData(this.props.id, result.toString())
         });
@@ -47,7 +50,7 @@ class UploadImage extends Component {
                         <Button variant="contained" color="default" component="span" startIcon={<CloudUploadIcon />}>Upload</Button>
                     </label>
                 </div>
-                <Typography style={{ float:"right"}} variant="body2" color="initial">{this.state.file.name ? this.state.file.name : ""}</Typography>
+                <Typography style={{ float:"right"}} variant="body2" color="initial">{getValue(this.props.label)}</Typography>
             </div>
         );
     }
