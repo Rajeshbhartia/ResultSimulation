@@ -393,14 +393,7 @@ class PageContent extends Component {
                                 </div>
 
                                 {this.getStepContent(this.state.activeStep)}
-                                {/* first component */}
-
-                                {/* second component */}
-                                {/* {this.state.showCheckBoxComp && (
-                                 
-                                )} */}
-
-                                <Faq />
+                                
                             </div>
                             <DefaultGradingTable setFormData={this.setFormData} />
                         </div>
