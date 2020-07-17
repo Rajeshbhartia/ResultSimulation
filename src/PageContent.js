@@ -6,7 +6,7 @@ import FormGroup from '@material-ui/core/FormGroup';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Checkbox from '@material-ui/core/Checkbox';
 import DefaultGradingTable from './DefaultGradingTable';
-import Faq from './Faq';
+// import Faq from './Faq';
 // import DrawCanves from './DrawCanves';
 import sampleFile from "./resource/sample_marks_file.xls";
 import UploadImage from './UploadImage';
